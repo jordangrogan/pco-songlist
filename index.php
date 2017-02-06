@@ -1,5 +1,7 @@
 <?php
 	
+	require("keys.php")
+	
 	$plans = array();
 	
 	$baseURL = "https://api.planningcenteronline.com/services/v2/service_types/330478";
@@ -12,7 +14,7 @@
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
  
 	// send the username and password
-	curl_setopt($ch, CURLOPT_USERPWD, "e9492d6d987dc60d127fb1f88673be0ec96b8b5b67da8d0cb377a870046e5137:360f4970b9d4edff6540d59a13857c4f82434fe64d9e689876253a17ef36ff00");
+	curl_setopt($ch, CURLOPT_USERPWD, "$ApplicationID:$Secret");
 	 
 	// if you allow redirections
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
