@@ -1,20 +1,21 @@
 <?php
 	
-	require("keys.php")
+	include_once("keys.php");
 	
 	$plans = array();
 	
-	$baseURL = "https://api.planningcenteronline.com/services/v2/service_types/330478";
+	$baseURL = "https://api.planningcenteronline.com/services/v2";
+	$serviceTypesURL = "/service_types/330478";
 	
 	/***** GET PLANS DATA FROM PLANNING CENTER AND ADD IT TO PLANS ARRAY ******/
 			
-	$url = $baseURL."/plans/?per_page=100";  // Initial page of 100 plans (default is 25 pages)
+	$url = $baseURL.$serviceTypesURL."/plans/?per_page=100";  // Initial page of 100 plans (default is 25 pages)
  
 	$ch = curl_init(); 
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
  
 	// send the username and password
-	curl_setopt($ch, CURLOPT_USERPWD, "$ApplicationID:$Secret");
+	curl_setopt($ch, CURLOPT_USERPWD, $ApplicationID.":".$Secret);
 	 
 	// if you allow redirections
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
@@ -59,7 +60,7 @@
     		//echo $x.": ".$plan->id.": ".$plan->attributes->series_title." - ".$plan->attributes->title." - ".$plan->attributes->dates."<br />";
     		echo "<strong>".$plan->attributes->dates."</strong> (".$plan->attributes->series_title." - ".$plan->attributes->title.")<br />";
     		
-    		$url = $baseURL."/plans/".$plan->id."/items";
+    		$url = $baseURL.$serviceTypesURL."/plans/".$plan->id."/items";
     		curl_setopt($ch, CURLOPT_URL, $url);
     				 
 			$output = curl_exec($ch);
@@ -67,7 +68,12 @@
 			$result = json_decode($output);
 			foreach($result->data as $item) {
 	    		if($item->attributes->item_type == "song") {
-		    		echo $item->attributes->title."<br />";
+		    		
+		    		$url = $baseURL."/songs/".$item->relationships->song->data->id;
+		    		curl_setopt($ch, CURLOPT_URL, $url);
+		    		$output = curl_exec($ch);
+		    		$songResult = json_decode($output);
+		    		echo $item->attributes->title." <small>(".$songResult->data->attributes->author.")</small><br />";
 	    		}
 			}
 			
